@@ -1,0 +1,165 @@
+<view class="table" wx:if="{{!detailShow}}">
+  <view class="tr bg-w bold">
+    <view class="td-1">序号</view>
+    <view class="td-2">肌肉群</view>
+    <view class="td-3">激活</view>
+    <view class="td-4">
+      <image src='../images/plus.png' class="plusImage" catchtap='bigAdd'></image>
+    </view>
+  </view>
+
+  <block wx:for="{{bigList}}" wx:key="id">
+    <view class="tr bg-g" wx:if="{{index % 2 == 0}}">
+      <view class="td-1">{{index+1}}</view>
+      <view class="td-2  bold" catchtap="addActivity" data-name="{{item.name}}" data-id="{{item._id}}">{{item.name}}</view>
+      <view class="td-3">
+        <switch bindchange="bigActivation" data-id="{{item._id}}" checked="{{item.activation}}"></switch>
+      </view>
+      <view class="td-4">
+        <image src='../images/delete.jpg' class="deleteImage" catchtap='bigDelete' data-id="{{item._id}}"></image>
+      </view>
+    </view>
+    <view class="tr bg-g2" wx:else>
+      <view class="td-1">{{index+1}}</view>
+      <view class="td-2  bold" catchtap="addActivity" data-name="{{item.name}}" data-id="{{item._id}}">{{item.name}}</view>
+      <view class="td-3">
+        <switch bindchange="bigActivation" data-id="{{item._id}}" checked="{{item.activation}}"></switch>
+      </view>
+      <view class="td-4">
+        <image src='../images/delete.jpg' class="deleteImage" catchtap='bigDelete' data-id="{{item._id}}"></image>
+      </view>
+    </view>
+  </block>
+</view>
+
+<modal hidden="{{bigAddHidden}}" title="添加" bindcancel="bigAddCancel" bindconfirm="bigAddConfirm">
+  <view class="item1">
+    <input type='text' cursor-spacing='100' value="{{bigAddValue}}" maxlength="20" placeholder="请输入肌肉群"
+      bindinput="bigAddInput" />
+    <view catchtap='bigAddClean' wx:if="{{bigAddFlag}}">
+      <image src='../images/x.png' class="clean"></image>
+    </view>
+  </view>
+</modal>
+
+<view wx:if="{{!detailShow}}">
+  <view class="table" wx:if="{{activityFlag}}">
+    <view class="tr bg-w bold">
+      <view class="td-1">序号</view>
+      <view class="td-2">{{activity}}动作</view>
+      <view class="td-3">激活</view>
+      <view class="td-4">
+        <image src='../images/plus.png' class="plusImage" catchtap='smallAdd'></image>
+      </view>
+    </view>
+
+    <block wx:for="{{smallList}}" wx:key="id">
+      <view class="tr bg-g" wx:if="{{index % 2 == 0}}">
+        <view class="td-1">{{index+1}}</view>
+        <view class="td-2  bold" catchtap='showGroup' data-id="{{item._id}}" data-name="{{item.name}}">{{item.name}}
+        </view>
+        <view class="td-3">
+          <switch bindchange="smallActivation" data-id="{{item._id}}" checked="{{item.activation}}"></switch>
+        </view>
+        <view class="td-4">
+          <image src='../images/delete.jpg' class="deleteImage" catchtap='smallDelete' data-id="{{item._id}}"></image>
+        </view>
+      </view>
+
+      <view class="tr bg-g2" wx:else>
+        <view class="td-1">{{index+1}}</view>
+        <view class="td-2  bold" catchtap='showGroup' data-id="{{item._id}}" data-name="{{item.name}}">{{item.name}}
+        </view>
+        <view class="td-3">
+          <switch bindchange="smallActivation" data-id="{{item._id}}" checked="{{item.activation}}"></switch>
+        </view>
+        <view class="td-4">
+          <image src='../images/delete.jpg' class="deleteImage" catchtap='smallDelete' data-id="{{item._id}}"></image>
+        </view>
+      </view>
+
+      <view class="tr bg-g" wx:if="{{index % 2 == 0}}">
+        <view class="td-1"></view>
+        <view class="td-2-1" catchtap='showGroup' data-id="{{item._id}}" data-name="{{item.name}}">
+          <text
+            decode="{{true}}">&nbsp;&nbsp;{{item.group}}组&nbsp;&nbsp;{{item.weight}}{{item.unit}}&nbsp;&nbsp;{{item.number}}个</text>
+        </view>
+        <view class="td-3"></view>
+        <view class="td-4"></view>
+      </view>
+
+
+      <view class="tr bg-g2" wx:else>
+        <view class="td-1"></view>
+        <view class="td-2-1" catchtap='showGroup' data-id="{{item._id}}" data-name="{{item.name}}">
+          <text
+            decode="{{true}}">&nbsp;&nbsp;{{item.group}}组&nbsp;&nbsp;{{item.weight}}{{item.unit}}&nbsp;&nbsp;{{item.number}}个</text>
+        </view>
+        <view class="td-3"></view>
+        <view class="td-4"></view>
+      </view>
+
+    </block>
+  </view>
+</view>
+
+<modal hidden="{{smallAddHidden}}" title="添加" bindcancel="smallAddCancel" bindconfirm="smallAddConfirm">
+  <view class="item1">
+    <input type='text' cursor-spacing='100' value="{{smallAddValue}}" maxlength="20" placeholder="请输入动作"
+      bindinput="smallAddInput" />
+    <view catchtap='smallAddClean' wx:if="{{smallAddFlag}}">
+      <image src='../images/x.png' class="clean"></image>
+    </view>
+  </view>
+</modal>
+
+<view class="mask" style="{{detailShow?'z-index: 1;opacity:0.8':''}}" catchtap='closeGroup'>
+</view>
+
+<view class='modalBg' wx:if="{{detailShow}}">
+  <view class="item2">
+    <view class="tr bg-w">
+      <view class="td">{{action}}</view>
+    </view>
+
+    <view class="tr bg-g">
+      <view class="detail-td-1">组数</view>
+      <view class="detail-td-2">重量</view>
+      <view class="detail-td-3">单位</view>
+      <view class="detail-td-4">数量</view>
+    </view>
+    <view class="line"></view>
+
+
+    <view class="tr bg-g">
+      <view class="detail-td-1">
+        <picker mode="multiSelector" bindchange="groupMethod" value="{{groupIndex}}" range="{{groupArray}}">
+          <text>{{group}}组</text>
+        </picker>
+      </view>
+      <view class="detail-td-2">
+        <picker mode="multiSelector" bindchange="weightMethod" value="{{weightIndex}}" range="{{weightArray}}">
+          <text>{{weight}}</text>
+        </picker>
+      </view>
+      <view class="detail-td-3">
+        <picker bindchange="unitMethod" value="{{unitIndex}}" range="{{unitArray}}">
+          <text>{{unit}}</text>
+        </picker>
+      </view>
+
+      <view class="detail-td-4">
+        <picker mode="multiSelector" bindchange="numberMethod" value="{{numberIndex}}" range="{{numberArray}}">
+          <text>{{number}}个</text>
+        </picker>
+      </view>
+
+    </view>
+
+    <view class="line"></view>
+
+    <view class="tr bg-g">
+      <view class="button1" catchtap='detailAdd'><button>确定</button></view>
+    </view>
+  </view>
+</view>

@@ -1,529 +1,478 @@
+var util = require('../../utils/util.js');
+
 const db = wx.cloud.database();
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-    bigAddHidden: true,
-    smallAddHidden: true,
-    detailShow: false,
-    groupArray: [
-      [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    ],
-
-    unitArray: ['公斤', '磅'],
-
-    weightArray: [
-      [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150],
-      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    ],
-    numberArray: [
-      [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    ],
+    year: 0,
+    month: 0,
+    date: ['日', '一', '二', '三', '四', '五', '六'],
+    dateArr: [],
+    isToday: 0,
+    isTodayWeek: false,
+    todayIndex: 0,
   },
 
-
-
-  detailAdd: function () {
-    this.detailAddDB(this.data.smallId, this.data.action, this.data.group, this.data.weight, this.data.unit, this.data.number);
-    this.setData({
-      detailShow: false
-    })
-  },
-
-
-  detailAddDB: function (smallId, name, group, weight, unit, number) {
-    db.collection('detail').add({
-      data: {
-        small_id: smallId,
-        name: name,
-        group: group,
-        weight: weight,
-        unit: unit,
-        number: number,
-        exercise_date: db.serverDate()
-      },
-      success: res => {
-        this.smallQuery(this.data.big_id);
-      },
-      fail: err => {
-        console.error('数据库新增失败：', err)
-      }
-    })
-  },
-
-
-  groupMethod: function (e) {
-    let groupArray = e.detail.value;
-    let group = groupArray[0] + 1;
-
-    this.setData({
-      group: group,
-    })
-  },
-
-  numberMethod: function (e) {
-    let numberArray = e.detail.value;
-    let number = numberArray[0] * 10 + numberArray[1];
-
-    this.setData({
-      number: number,
-    })
-  },
-
-  unitMethod: function (e) {
-    let unitArray = e.detail.value;
-    let unit = unitArray[0];
-
-    this.setData({
-      unit: this.data.unitArray[unit],
-    })
-  },
-
-  weightMethod: function (e) {
-    let weightArray = e.detail.value;
-    let weight = weightArray[0] * 10 + weightArray[1];
-
-    this.setData({
-      weight: weight,
-    })
-  },
-
-
-  showGroup: function (e) {
-    this.detailQuery(e);
-  },
-
-
-  detailQuery: function (e) {
-
-    db.collection('detail').limit(1).orderBy('exercise_date', 'desc').where({
-      small_id: e.currentTarget.dataset.id
-    }).get({
-      success: res => {
-        this.setData({
-          detailShow: true,
-          smallId: e.currentTarget.dataset.id,
-          action: e.currentTarget.dataset.name,
-          group: res.data[0]['group'],
-          weight: res.data[0]['weight'],
-          unit: res.data[0]['unit'],
-          number: res.data[0]['number'],
-        })
-      }
-    })
-  },
-
-
-  closeGroup: function (e) {
-    this.setData({
-      detailShow: false
-    })
-  },
-
-
-  bigActivation: function (e) {
-    if (e.detail.value) {
-      this.bigUpdate(e.currentTarget.dataset.id, true);
-    } else {
-      this.bigUpdate(e.currentTarget.dataset.id, false);
-    }
-
-  },
-
-  bigUpdate: function (id, activation) {
-    db.collection('big').doc(id).update({
-      data: {
-        activation: activation
-      },
-      success: res => {
-        this.bigQuery();
-      },
-      fail: err => {
-        console.error('数据库更新失败：', err)
-      }
-    })
-  },
-
-  smallUpdate: function (id, activation) {
-
-    db.collection('small').doc(id).update({
-      data: {
-        activation: activation
-      },
-      success: res => {
-        this.smallQuery(this.data.big_id);
-      },
-      fail: err => {
-        console.error('数据库更新失败：', err)
-      }
-    })
-  },
-
-
-
-  smallActivation: function (e) {
-    if (e.detail.value) {
-      this.smallUpdate(e.currentTarget.dataset.id, true);
-    } else {
-      this.smallUpdate(e.currentTarget.dataset.id, false);
-    }
-  },
-
-
-
-  addActivity: function (e) {
-    this.smallQuery(e.currentTarget.dataset.id);
-
-    this.setData({
-      big_id: e.currentTarget.dataset.id,
-      activity: e.currentTarget.dataset.name,
-      activityFlag: true
-    })
-  },
-
-
-  smallQuery: function (big_id) {
-
-    db.collection('small').where({
-      big_id: big_id
-    }).get({
-      success: res => {
-        let smallList = res.data;
-        this.aggregate9(smallList);
-
-      }
-    })
-  },
-
-
-  aggregate9: function (inList) {
-    //得到所有的small_id，然后查询detail表，查出对应的数据，最后整合到list中
-    let smallIdList = [];
-    for (let x in inList) {
-      smallIdList.push(inList[x]['_id']);
-    }
+  test: function () {
+    let now = new Date();
+    let year = now.getFullYear();
+    let month = now.getMonth() + 1;
 
     wx.cloud.callFunction({
-      name: 'aggregate9',
+      name: 'clockinDate',
       data: {
-        inArray: smallIdList
+        year: year,
+        month: month
       },
+      complete: res => {}
+    })
+  },
+
+  open: function () {
+    this.setData({
+      isExpanding: !this.data.isExpanding
+    })
+  },
+
+
+  aggregate1: function () {
+    wx.cloud.callFunction({
+      name: 'aggregate1',
       complete: res => {
+        this.setData({
+          aggregate1List: res.result.list
+        })
+      }
+    })
+  },
+
+  aggregate2: function () {
+    wx.cloud.callFunction({
+      name: 'aggregate2',
+      complete: res => {
+        let resultList = res.result.data;
+        for (let x in resultList) {
+          let id = resultList[x]['_id'];
+          let small_name = resultList[x]['small_name'];
+          let small_weight = small_name + ' ' + resultList[x]['groupList'][0]['weight'] + resultList[x]['groupList'][0]['unit'];
+          this.clockinUpdateSmall_weight(id, small_weight);
+        }
+
+      }
+    })
+  },
+
+  updateClient_date: function () {
+    wx.cloud.callFunction({
+      name: 'aggregate2',
+      complete: res => {
+        let resultList = res.result.data;
+        for (let x in resultList) {
+          let id = resultList[x]['_id'];
+          let clockin_date = new Date(resultList[x]['clockin_date']);
+          let year = clockin_date.getFullYear();
+          let month = clockin_date.getMonth();
+          let day = clockin_date.getDate();
+          let client_date = year + "-" + (month + 1) + "-" + day;
+
+          this.clockinUpdateClient_date(id, client_date);
+        }
+
+      }
+    })
+  },
+
+  clockinUpdateClient_date: function (id, client_date) {
+
+    db.collection('clockin').doc(id).update({
+      data: {
+        client_date: client_date
+      },
+      success: res => {},
+      fail: err => {
+        console.error('数据库更新失败：', err)
+      }
+    })
+  },
+
+  getClient_date: function () {
+    let date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var client_date = year + "-" + month + "-" + day;
+    return client_date;
+  },
+
+
+
+  aggregate5: function () {
+    wx.cloud.callFunction({
+      name: 'aggregate5',
+      complete: res => {
+        this.setData({
+          aggregate5List: res.result.list
+        })
+      }
+    })
+  },
+
+
+  aggregate6: function () {
+    wx.cloud.callFunction({
+      name: 'aggregate6',
+      complete: res => {
+        let aggregate6List = [];
         let resultList = res.result.list;
-        let smallList = [];
-        for (let x in inList) {
-          let smallMap = {};
-          smallMap['_id'] = inList[x]['_id'];
-          smallMap['name'] = inList[x]['name'];
-          smallMap['activation'] = inList[x]['activation'];
-          for (let y in resultList) {
-            if (inList[x]['_id'] == resultList[y]['_id']) {
-              let row = resultList[y]['row'];
-              smallMap['group'] = row['group'];
-              smallMap['weight'] = row['weight'];
-              smallMap['unit'] = row['unit'];
-              smallMap['number'] = row['number'];
-              break;
-            }
-          }
-          smallList.push(smallMap);
-        }
+        for (let x in resultList) {
+          let startDate = new Date(resultList[x]['startDate']);
+          let year = startDate.getFullYear();
+          let month = startDate.getMonth();
+          let day = startDate.getDate();
+          let startDate_str = year + "-" + (month + 1) + "-" + day;
 
+          let aggregate6Map = {};
+          aggregate6Map['_id'] = resultList[x]['_id'];
+          aggregate6Map['startDate'] = startDate_str;
+          aggregate6List.push(aggregate6Map);
+        }
         this.setData({
-          smallList: smallList
+          aggregate6List: aggregate6List
         })
       }
     })
   },
 
-  smallDelete: function (e) {
-    this.smallDeleteDB(e);
+
+  aggregate7: function () {
+
+    wx.cloud.callFunction({
+      name: 'getUserInfo',
+      complete: res => {
+        let openid = res.result.openid;
+
+        wx.cloud.callFunction({
+          name: 'aggregate7',
+          data: {
+            openid: openid
+          },
+          complete: res => {
+            this.setData({
+              statisticsList: res.result
+            })
+          }
+        })
+      }
+    })
+
+
   },
 
 
-  smallDeleteDB: function (e) {
+  aggregate8: function () {
+    wx.cloud.callFunction({
+      name: 'getUserInfo',
+      complete: res => {
+        let openid = res.result.openid;
 
-    db.collection('small').doc(e.currentTarget.dataset.id).remove({
-      success: res => {
-        this.smallQuery(this.data.big_id);
-      },
-      fail: err => {
-        console.error('数据库删除失败：', err)
+        wx.cloud.callFunction({
+          name: 'aggregate8',
+          data: {
+            openid: openid
+          },
+          complete: res => {
+            this.setData({
+              clockinTotal: res.result
+            })
+          }
+        })
       }
     })
   },
 
 
-  smallAddDB: function (big_id, name) {
+  getUserInfo() {
+    wx.cloud.callFunction({
+      name: 'getUserInfo',
+      complete: res => {
+        let openid = res.result.openid;
 
-    db.collection('small').add({
-      data: {
-        big_id: big_id,
-        name: name,
-        activation: true
-      },
-      success: res => {
-        this.detailAddDB(res._id, name, 4, 20, '公斤', 20);
-      },
-      fail: err => {
-        console.error('数据库新增失败：', err)
       }
     })
   },
 
-  smallAdd: function () {
-    this.smallAddClean();
+
+
+  selectDay: function (e) {
+    let clockin_date = e.currentTarget.dataset.clockin_date;
+    let startdate = clockin_date + " 00:00:00";
+    let enddate = clockin_date + " 23:59:59";
+    let sdate = new Date(startdate);
+    let edate = new Date(enddate);
+
+    this.clockinQuery(sdate, edate);
+
     this.setData({
-      smallAddHidden: false
+      isToday: clockin_date
     })
-  },
 
-  smallAddCancel: function () {
-    this.setData({
-      smallAddValue: '',
-      smallAddHidden: true,
-      smallAddFlag: false
-    });
   },
 
 
-  smallAddConfirm: function () {
-    this.smallAddDB(this.data.big_id, this.data.smallName);
+  clockinQuery: function (sdate, edate) {
 
-
-    this.setData({
-      smallAddHidden: true
-    });
-  },
-
-
-  smallAddInput: function (e) {
-    if (e.detail.value.length == 0) {
-      this.smallAddClean();
-    } else {
-      this.setData({
-        smallName: e.detail.value,
-        smallAddFlag: true
-      })
-    }
-  },
-
-  smallAddClean: function () {
-    this.setData({
-      smallAddValue: '',
-      smallAddFlag: false
-    })
-  },
-
-
-  detailQueryBySmallId: function (smallIdList, smallList) {
-
-    db.collection('detail').where({
-      small_id: db.command.in(smallIdList)
+    db.collection('clockin').where({
+      clockin_date: db.command.gte(sdate).and(db.command.lte(edate))
     }).get({
       success: res => {
-        let resultList = [];
-        let detailList = res.data;
-        for (let x = 0; x < detailList.length; x++) {
-          let max = detailList[x];
-          let flag = false;
-          for (let y = 1; y < detailList.length; y++) {
-            if (max['name'] == detailList[y]['name']) {
-              flag = true;
-              if (max['exercise_date'] < detailList[y]['exercise_date']) {
-                max = detailList[y];
-              }
-            }
-          }
-          if (flag) {
-            resultList.push(max);
-          } else {
-            resultList.push(detailList[x]);
-          }
-        }
-
-        for (let x in smallList) {
-          for (let y in resultList) {
-            if (smallList[x]['name'] == resultList[y]['name']) {
-              smallList[x]['group'] = resultList[y]['group'];
-              smallList[x]['unit'] = resultList[y]['unit'];
-              smallList[x]['weight'] = resultList[y]['weight'];
-              smallList[x]['number'] = resultList[y]['number'];
-              smallList[x]['exercise_date'] = resultList[y]['exercise_date'];
-              break;
-            }
-          }
-        }
         this.setData({
-          smallList: smallList
+          clockinList: res.data
         })
       }
     })
   },
 
 
-  bigDelete: function (e) {
-    this.smallQueryBybig_id(e.currentTarget.dataset.id);
+  clockinCount: function (sdate, edate) {
 
-
-  },
-
-  smallQueryBybig_id: function (big_id) {
-
-    db.collection('small').where({
-      big_id: big_id
-    }).get({
-      success: res => {
-        if (res.data.length > 0) {
-          wx.showToast({
-            title: '还有动作，不能删除',
-            icon: 'none',
-            duration: 2000,
-            mask: true
-          })
-        } else {
-          db.collection('big').doc(big_id).remove({
-            success: res => {
-              this.bigQuery();
-            },
-            fail: err => {
-              console.error('数据库删除失败：', err)
-            }
-          })
-        }
-      }
+    db.collection('clockin').where({
+      clockin_date: db.command.gte(sdate).and(db.command.lte(edate))
+    }).count({
+      success: res => {}
     })
   },
 
 
-  bigAddDB: function (name) {
-
-    db.collection('big').add({
-      data: {
-        name: name,
-        activation: true
-      },
-      success: res => {
-        this.bigQuery();
-      },
-      fail: err => {
-        console.error('数据库新增失败：', err)
-      }
-    })
-  },
-
-  bigAdd: function () {
-    this.bigAddClean();
-    this.setData({
-      bigAddHidden: false
-    })
-  },
-
-  bigAddCancel: function () {
-    this.setData({
-      bigAddValue: '',
-      bigAddHidden: true,
-      bigAddFlag: false
-    });
-  },
-
-
-  bigAddConfirm: function () {
-    //TODO 如果存在就更新，如果不存在，就添加
-    this.bigAddDB(this.data.bigName);
-
-
-    this.setData({
-      bigAddHidden: true
-    });
-
-  },
-
-
-  bigAddInput: function (e) {
-    if (e.detail.value.length == 0) {
-      this.bigAddClean();
-    } else {
-      this.setData({
-        bigName: e.detail.value,
-        bigAddFlag: true
-      })
-    }
-  },
-
-  bigAddClean: function () {
-    this.setData({
-      bigAddValue: '',
-      bigAddFlag: false
-    })
-  },
-
-
-  bigQuery: function () {
-
-    db.collection('big').get({
-      success: res => {
-        this.setData({
-          bigList: res.data
-        })
-      }
-    })
+  formatDay(n) {
+    n = n.toString()
+    return n[1] ? n : '0' + n
   },
 
 
   /**
-   * 生命周期函数--监听页面加载
+   * 上月切换
    */
-  onLoad: function (options) {
+  lastMonth: function () {
+    //全部时间的月份都是按0~11基准，显示月份才+1
+    let year = this.data.month - 2 < 0 ? this.data.year - 1 : this.data.year;
+    let month = this.data.month - 2 < 0 ? 11 : this.data.month - 2;
+    let isToday = '' + year + this.formatDay(month + 1) + this.formatDay(1);
+    let date = year + '-' + this.formatDay(month + 1) + '-' + this.formatDay(1);
 
+    let startdate = date + " 00:00:00";
+    let enddate = date + " 23:59:59";
+    let sdate = new Date(startdate);
+    let edate = new Date(enddate);
+
+    this.clockinQuery(sdate, edate);
+
+    this.setData({
+      year: year,
+      month: (month + 1),
+      isToday: isToday
+    })
+
+    this.clockinQueryByMonth(year, this.data.month);
   },
 
   /**
-   * 生命周期函数--监听页面初次渲染完成
+   * 下月切换
    */
-  onReady: function () {
+  nextMonth: function () {
+    //全部时间的月份都是按0~11基准，显示月份才+1
+    let year = this.data.month > 11 ? this.data.year + 1 : this.data.year;
+    let month = this.data.month > 11 ? 0 : this.data.month;
+    let isToday = '' + year + this.formatDay(month + 1) + this.formatDay(1);
+    let date = year + '-' + this.formatDay(month + 1) + '-' + this.formatDay(1);
 
+    let startdate = date + " 00:00:00";
+    let enddate = date + " 23:59:59";
+    let sdate = new Date(startdate);
+    let edate = new Date(enddate);
+
+    this.clockinQuery(sdate, edate);
+
+    this.setData({
+      year: year,
+      month: (month + 1),
+      isToday: isToday
+    })
+
+    this.clockinQueryByMonth(year, this.data.month);
+  },
+
+
+  onLoad: function () {
+    this.getUserInfo();
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    this.bigQuery();
+    let now = new Date();
+    let year = now.getFullYear();
+    let month = now.getMonth() + 1;
+
+    this.setData({
+      year: year,
+      month: month
+    })
+
+    //打卡日期
+    this.clockinQueryByMonth(year, month);
+
+    //打卡统计信息
+    this.aggregate7();
+
+    this.aggregate8();
+  },
+
+  clockinUpdateSmall_weight: function (id, small_weight) {
+
+    db.collection('clockin').doc(id).update({
+      data: {
+        small_weight: small_weight
+      },
+      success: res => {},
+      fail: err => {
+        console.error('数据库更新失败：', err)
+      }
+    })
+  },
+
+  clockinQueryByMonth: function (year, month) {
+
+    wx.cloud.callFunction({
+      name: 'getUserInfo',
+      complete: res => {
+        let openid = res.result.openid;
+
+        wx.cloud.callFunction({
+          name: 'clockinDate',
+          data: {
+            year: year,
+            month: month,
+            openid: openid
+          },
+          complete: res => {
+            if (res.result.data.length == 0) {
+              this.setData({
+                dayList: [],
+                showClockin: false
+              })
+              return;
+            }
+            let dayList = this.getDayList(res.result.data);
+            let isToday = dayList[dayList.length - 1]['clockin_date'];
+
+            this.setData({
+              dayList: dayList,
+              isToday: isToday,
+              showClockin: true
+            })
+
+            let startdate = isToday + " 00:00:00";
+            let enddate = isToday + " 23:59:59";
+            let sdate = new Date(startdate);
+            let edate = new Date(enddate);
+            this.clockinQuery(sdate, edate);
+          }
+        })
+      }
+    })
+
+  },
+
+
+  clockinCountByMonth: function (year, month) {
+    let month1 = year + "-" + month + "-1";
+    let month2 = year + "-" + (month + 1) + "-1";
+    let sdate = new Date(month1);
+    let edate = new Date(month2);
+
+
+    db.collection('clockin').where({
+      clockin_date: db.command.gte(sdate).and(db.command.lt(edate))
+    }).count({
+      success: res => {}
+    })
+  },
+
+
+  getDayList: function (resultList) {
+    let dayList = [];
+    for (let x in resultList) {
+      let flag = false;
+      let clockin_date = new Date(resultList[x]['clockin_date']);
+      let year = clockin_date.getFullYear();
+      let month = clockin_date.getMonth();
+      let day = clockin_date.getDate();
+      let week = this.getWeek(clockin_date.getDay());
+      let clockin_str = year + "-" + (month + 1) + "-" + day;
+
+      for (let y in dayList) {
+        if (dayList[y]['clockin_date'] == clockin_str) {
+          flag = true;
+          break;
+        }
+      }
+
+      if (!flag) {
+        let dayMap = {};
+        dayMap['clockin_date'] = clockin_str;
+        dayMap['week'] = week;
+        dayList.push(dayMap);
+      }
+    }
+
+    for (let x in dayList) {
+      let big_name = '';
+      for (let y in resultList) {
+        let clockin_date = new Date(resultList[y]['clockin_date']);
+        let year = clockin_date.getFullYear();
+        let month = clockin_date.getMonth();
+        let day = clockin_date.getDate();
+        let clockin_str = year + "-" + (month + 1) + "-" + day;
+
+        if (dayList[x]['clockin_date'] == clockin_str) {
+          if (big_name.indexOf(resultList[y]['big_name']) == -1) {
+            big_name = resultList[y]['big_name'] + "，" + big_name;
+          }
+        }
+      }
+      big_name = big_name.substr(0, big_name.lastIndexOf('，'));
+      dayList[x]['big_name'] = big_name
+    }
+
+    return dayList;
+  },
+
+  getWeek: function (week) {
+    switch (week) {
+      case 1:
+        return '星期一';
+      case 2:
+        return '星期二';
+      case 3:
+        return '星期三';
+      case 4:
+        return '星期四';
+      case 5:
+        return '星期五';
+      case 6:
+        return '星期六';
+      case 0:
+        return '星期日';
+    }
   },
 
   /**
-   * 生命周期函数--监听页面隐藏
+   * 用户点击右上角分享
    */
-  onHide: function () {
+  onShareAppMessage: function () {
 
   },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
     /**
    * 允许用户点击右上角分享给朋友
    */
@@ -536,5 +485,6 @@ Page({
   onShareTimeline: function () {
     title: '强身打卡：记录每一次健身，给增肌提供数据。'
   }
+
 
 })

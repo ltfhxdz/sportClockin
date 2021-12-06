@@ -1,8 +1,8 @@
 {
   "pages": [
     "pages/clockin/clockin",
-    "pages/history/history",
-    "pages/statistics/statistics"
+    "pages/statistics/statistics",
+    "pages/setup/setup"
   ],
   "window": {
     "backgroundTextStyle": "dark",
@@ -22,13 +22,13 @@
         "text": "打卡"
       },
       {
-        "pagePath": "pages/history/history",
+        "pagePath": "pages/statistics/statistics",
         "iconPath": "pages/images/meihua.jpg",
         "selectedIconPath": "pages/images/meihua.jpg",
         "text": "统计"
       },
       {
-        "pagePath": "pages/statistics/statistics",
+        "pagePath": "pages/setup/setup",
         "iconPath": "pages/images/lanhua.jpg",
         "selectedIconPath": "pages/images/lanhua.jpg",
         "text": "设置"
