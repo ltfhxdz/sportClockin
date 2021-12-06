@@ -1,0 +1,93 @@
+<swiper class="view_swiper" autoplay="true" interval="10000" duration="600" circular="false">
+  <swiper-item>
+    <view class="swiper_image">
+      <image src="../../pages/images/jianshen1.jpg" mode='aspectFit' />
+    </view>
+  </swiper-item>
+  <swiper-item>
+    <view class="swiper_image">
+      <image src="../../pages/images/jianshen2.jpg" mode='aspectFit' />
+    </view>
+  </swiper-item>
+  <swiper-item>
+    <view class="swiper_image">
+      <image src="../../pages/images/jianshen3.jpg" mode='aspectFit' />
+    </view>
+  </swiper-item>
+  <swiper-item>
+    <view class="swiper_image">
+      <image src="../../pages/images/jianshen4.jpg" mode='aspectFit' />
+    </view>
+  </swiper-item>
+  <swiper-item>
+    <view class="swiper_image">
+      <image src="../../pages/images/jianshen5.jpg" mode='aspectFit' />
+    </view>
+  </swiper-item>
+</swiper>
+
+<view class="table" wx:if="{{!detailShow}}" wx:for="{{bigList}}" wx:key="id">
+  <view class="tr bg-w">
+    <view class="td">{{item.name}}</view>
+  </view>
+
+  <block wx:for="{{item.smallList}}" wx:for-item="smallList" wx:key="id">
+    <view class="tr bg-g">
+      <view class="td-1">{{index+1}}</view>
+      <view class="td-2" catchtap='showGroup' data-big_name="{{item.name}}" data-small_id="{{smallList.small_id}}"
+        data-small_name="{{smallList.name}}">{{smallList.name}}</view>
+    </view>
+    <view class="line"></view>
+  </block>
+</view>
+
+<view class="mask" style="{{detailShow?'z-index: 1;opacity:0.8':''}}" catchtap='closeGroup'>
+</view>
+
+<view class='modalBg' wx:if="{{detailShow}}">
+  <view class="item2">
+    <view class="tr bg-w">
+      <view>{{small_name}}</view>
+    </view>
+    <view class="tr bg-g">
+      <view class="detail-td-1">组数</view>
+      <view class="detail-td-2">重量</view>
+      <view class="detail-td-3">数量</view>
+      <view class="detail-td-4">打卡</view>
+    </view>
+
+    <view class="line"></view>
+
+    <view wx:for="{{groupList}}" wx:key="id">
+      <view class="tr bg-g">
+        <view class="detail-td-1">第{{item.group}}组</view>
+        <view class="detail-td-2">
+          <picker mode="multiSelector" bindchange="weightMethod" value="{{weightIndex}}" range="{{weightArray}}"
+            data-group="{{item.group}}">
+            <text>{{item.weight}}{{item.unit}}</text>
+          </picker>
+        </view>
+
+        <view class="detail-td-3">
+          <picker mode="multiSelector" bindchange="numberMethod" value="{{numberIndex}}" range="{{numberArray}}"
+            data-group="{{item.group}}">
+            <text>{{item.number}}个</text>
+          </picker>
+        </view>
+        <view class="detail-td-4">
+          <switch bindchange="clockin" checked="{{item.activation}}" data-group="{{item.group}}"
+            data-weight="{{item.weight}}" data-unit="{{item.unit}}" data-number="{{item.number}}"
+            data-small_name="{{small_name}}" data-small_id="{{small_id}}"></switch>
+        </view>
+      </view>
+
+      <view class="line"></view>
+    </view>
+
+    <view class="tr bg-g">
+      <view class="button1" catchtap='batchClockin' data-small_name="{{small_name}}" data-small_id="{{small_id}}">
+        <button>一键打卡</button>
+      </view>
+    </view>
+  </view>
+</view>
