@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/clockin/clockin",
     "pages/statistics/statistics",
+    "pages/clockin/clockin",
     "pages/setup/setup"
   ],
   "window": {

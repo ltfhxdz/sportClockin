@@ -35,53 +35,6 @@ Page({
   },
 
 
-  aggregate1: function () {
-    wx.cloud.callFunction({
-      name: 'aggregate1',
-      complete: res => {
-        this.setData({
-          aggregate1List: res.result.list
-        })
-      }
-    })
-  },
-
-  aggregate2: function () {
-    wx.cloud.callFunction({
-      name: 'aggregate2',
-      complete: res => {
-        let resultList = res.result.data;
-        for (let x in resultList) {
-          let id = resultList[x]['_id'];
-          let small_name = resultList[x]['small_name'];
-          let small_weight = small_name + ' ' + resultList[x]['groupList'][0]['weight'] + resultList[x]['groupList'][0]['unit'];
-          this.clockinUpdateSmall_weight(id, small_weight);
-        }
-
-      }
-    })
-  },
-
-  updateClient_date: function () {
-    wx.cloud.callFunction({
-      name: 'aggregate2',
-      complete: res => {
-        let resultList = res.result.data;
-        for (let x in resultList) {
-          let id = resultList[x]['_id'];
-          let clockin_date = new Date(resultList[x]['clockin_date']);
-          let year = clockin_date.getFullYear();
-          let month = clockin_date.getMonth();
-          let day = clockin_date.getDate();
-          let client_date = year + "-" + (month + 1) + "-" + day;
-
-          this.clockinUpdateClient_date(id, client_date);
-        }
-
-      }
-    })
-  },
-
   clockinUpdateClient_date: function (id, client_date) {
 
     db.collection('clockin').doc(id).update({
@@ -106,45 +59,7 @@ Page({
 
 
 
-  aggregate5: function () {
-    wx.cloud.callFunction({
-      name: 'aggregate5',
-      complete: res => {
-        this.setData({
-          aggregate5List: res.result.list
-        })
-      }
-    })
-  },
-
-
-  aggregate6: function () {
-    wx.cloud.callFunction({
-      name: 'aggregate6',
-      complete: res => {
-        let aggregate6List = [];
-        let resultList = res.result.list;
-        for (let x in resultList) {
-          let startDate = new Date(resultList[x]['startDate']);
-          let year = startDate.getFullYear();
-          let month = startDate.getMonth();
-          let day = startDate.getDate();
-          let startDate_str = year + "-" + (month + 1) + "-" + day;
-
-          let aggregate6Map = {};
-          aggregate6Map['_id'] = resultList[x]['_id'];
-          aggregate6Map['startDate'] = startDate_str;
-          aggregate6List.push(aggregate6Map);
-        }
-        this.setData({
-          aggregate6List: aggregate6List
-        })
-      }
-    })
-  },
-
-
-  aggregate7: function () {
+  statistics: function () {
 
     wx.cloud.callFunction({
       name: 'getUserInfo',
@@ -152,7 +67,7 @@ Page({
         let openid = res.result.openid;
 
         wx.cloud.callFunction({
-          name: 'aggregate7',
+          name: 'statistics',
           data: {
             openid: openid
           },
@@ -169,14 +84,14 @@ Page({
   },
 
 
-  aggregate8: function () {
+  total: function () {
     wx.cloud.callFunction({
       name: 'getUserInfo',
       complete: res => {
         let openid = res.result.openid;
 
         wx.cloud.callFunction({
-          name: 'aggregate8',
+          name: 'total',
           data: {
             openid: openid
           },
@@ -323,9 +238,9 @@ Page({
     this.clockinQueryByMonth(year, month);
 
     //打卡统计信息
-    this.aggregate7();
+    this.statistics();
 
-    this.aggregate8();
+    this.total();
   },
 
   clockinUpdateSmall_weight: function (id, small_weight) {
