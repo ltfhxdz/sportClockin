@@ -60,7 +60,6 @@ Page({
 
 
   statistics: function () {
-
     wx.cloud.callFunction({
       name: 'getUserInfo',
       complete: res => {
@@ -79,8 +78,6 @@ Page({
         })
       }
     })
-
-
   },
 
 

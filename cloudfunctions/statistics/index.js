@@ -76,6 +76,7 @@ async function getSmallDaysList(openid) {
         _id: '$small_weight',
         days: $.sum(1)
       })
+      .limit(35600)
       .end();
 
     return queryList['list'];
