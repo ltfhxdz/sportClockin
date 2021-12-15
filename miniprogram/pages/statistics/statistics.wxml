@@ -16,10 +16,11 @@
   <block wx:for="{{dayList}}" wx:key="id">
     <view bindtap='selectDay' data-clockin_date='{{item.clockin_date}}'
       class='{{isToday == item.clockin_date ? "nowDay" : "nowDay2"}}'>
-      <view class="date-head">
-        <text
-          decode="{{true}}">&nbsp;&nbsp;&nbsp;&nbsp;{{index+1}}.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.clockin_date}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.week}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.big_name}}</text>
-      </view>
+
+      <view class="t1">{{index+1}}</view>
+      <view class="t2">{{item.clockin_date}}</view>
+      <view class="t3">{{item.week}}</view>
+      <view class="t4">{{item.big_name}}</view>
     </view>
     <view class="line"></view>
   </block>

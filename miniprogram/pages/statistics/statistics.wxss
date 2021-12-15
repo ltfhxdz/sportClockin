@@ -79,7 +79,7 @@
   font-size: 12pt;
 }
 
-.nowDay .date-head {
+.nowDay {
   display: flex;
   justify-content: left;
   height: 70rpx;
@@ -246,4 +246,36 @@
 .item {
   padding: 25rpx;
   position: relative;
+}
+
+.t1 {
+  width: 15%;
+  justify-content: center;
+  display: flex;
+  height: 70rpx;
+  align-items: center;
+}
+
+.t2 {
+  width: 25%;
+  justify-content: center;
+  display: flex;
+  height: 70rpx;
+  align-items: center;
+}
+
+.t3 {
+  width: 25%;
+  justify-content: center;
+  display: flex;
+  height: 70rpx;
+  align-items: center;
+}
+
+.t4 {
+  width: 35%;
+  justify-content: left;
+  display: flex;
+  height: 70rpx;
+  align-items: center;
 }
