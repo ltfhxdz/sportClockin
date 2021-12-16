@@ -349,7 +349,7 @@ Page({
 
         if (dayList[x]['clockin_date'] == clockin_str) {
           if (big_name.indexOf(resultList[y]['big_name']) == -1) {
-            big_name = resultList[y]['big_name'] + "，" + big_name;
+            big_name = big_name + resultList[y]['big_name'] + "，";
           }
         }
       }
@@ -385,7 +385,7 @@ Page({
   onShareAppMessage: function () {
 
   },
-    /**
+  /**
    * 允许用户点击右上角分享给朋友
    */
   onShareAppMessage: function () {
