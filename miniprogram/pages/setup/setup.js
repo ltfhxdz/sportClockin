@@ -1,3 +1,4 @@
+var muscleJson = require('../../data/muscle.js');
 const db = wx.cloud.database();
 
 Page({
@@ -6,9 +7,11 @@ Page({
    * 页面的初始数据
    */
   data: {
+    bigSelectShow: false,
     bigAddHidden: true,
     smallAddHidden: true,
     detailShow: false,
+    bigShow: true,
     groupArray: [
       [1, 2, 3, 4, 5, 6, 7, 8, 9]
     ],
@@ -30,7 +33,8 @@ Page({
   detailAdd: function () {
     this.detailAddDB(this.data.smallId, this.data.action, this.data.group, this.data.weight, this.data.unit, this.data.number);
     this.setData({
-      detailShow: false
+      detailShow: false,
+      bigShow: true,
     })
   },
 
@@ -106,6 +110,7 @@ Page({
       success: res => {
         this.setData({
           detailShow: true,
+          bigShow: false,
           smallId: e.currentTarget.dataset.id,
           action: e.currentTarget.dataset.name,
           group: res.data[0]['group'],
@@ -120,7 +125,8 @@ Page({
 
   closeGroup: function (e) {
     this.setData({
-      detailShow: false
+      detailShow: false,
+      bigShow: true,
     })
   },
 
@@ -264,7 +270,8 @@ Page({
       data: {
         big_id: big_id,
         name: name,
-        activation: true
+        activation: true,
+        create_date: db.serverDate()
       },
       success: res => {
         this.detailAddDB(res._id, name, 4, 20, '公斤', 20);
@@ -368,12 +375,9 @@ Page({
 
   bigDelete: function (e) {
     this.smallQueryBybig_id(e.currentTarget.dataset.id);
-
-
   },
 
   smallQueryBybig_id: function (big_id) {
-
     db.collection('small').where({
       big_id: big_id
     }).get({
@@ -401,11 +405,11 @@ Page({
 
 
   bigAddDB: function (name) {
-
     db.collection('big').add({
       data: {
         name: name,
-        activation: true
+        activation: true,
+        create_date: db.serverDate()
       },
       success: res => {
         this.bigQuery();
@@ -417,17 +421,89 @@ Page({
   },
 
   bigAdd: function () {
+    this.setData({
+      bigAddFrameHidden: true,
+      detailShow: false,
+      bigShow: false,
+    })
+  },
+
+  selectActivation: function (e) {
+    if(e.detail.value){
+      this.bigAddDB(e.currentTarget.dataset.muscle);
+    }else{
+      this.bigDeleteByName(e.currentTarget.dataset.muscle);
+    }
+  },
+
+  bigSelectAdd: function () {
+    let bigList = this.data.bigList;
+    let muscleArray = muscleJson.muscleJson;
+    let selectList = [];
+    for (let x in muscleArray) {
+      let flag = false;
+      for(let y in bigList){
+        let name = bigList[y].name;
+        if(name == muscleArray[x]['muscle']){
+          flag = true;
+          break;
+        }
+      }
+      if(!flag){
+        let selectMap = {};
+        selectMap['muscle'] = muscleArray[x]['muscle'];
+        selectList.push(selectMap);
+      }
+    }
+
+    this.setData({
+      selectList: selectList,
+      bigAddFrameHidden: false,
+      bigSelectShow: true,
+      bigShow: false
+    })
+  },
+
+  bigDeleteByName: function (name) {
+    db.collection('big').where({
+      name: name
+    }).remove()
+  },
+
+  bigAddFrameCancel: function () {
+    this.setData({
+      bigAddFrameHidden: false,
+      detailShow: false,
+      bigShow: true
+    })
+  },
+
+  bigSelectAddCancel: function () {
+    this.setData({
+      bigSelectShow: false,
+      bigShow: true
+    })
+
+    this.bigQuery();
+  },
+
+  bigHandworkAdd: function () {
     this.bigAddClean();
     this.setData({
-      bigAddHidden: false
+      bigAddHidden: false,
+      bigAddFrameHidden: false
     })
   },
 
   bigAddCancel: function () {
+    // this.bigQuery();
+
     this.setData({
       bigAddValue: '',
       bigAddHidden: true,
-      bigAddFlag: false
+      bigAddFlag: false,
+      bigAddFrameHidden: true,
+      bigSelectShow: false
     });
   },
 
@@ -438,7 +514,9 @@ Page({
 
 
     this.setData({
-      bigAddHidden: true
+      bigAddHidden: true,
+      bigAddFrameHidden: false,
+      bigShow: true
     });
 
   },
@@ -464,8 +542,7 @@ Page({
 
 
   bigQuery: function () {
-
-    db.collection('big').get({
+    db.collection('big').orderBy('name', 'asc').get({
       success: res => {
         this.setData({
           bigList: res.data
@@ -479,7 +556,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    
   },
 
   /**
@@ -524,7 +601,7 @@ Page({
 
   },
 
-    /**
+  /**
    * 允许用户点击右上角分享给朋友
    */
   onShareAppMessage: function () {

@@ -80,6 +80,34 @@
   border-right: 2px solid #ddd;
 }
 
+.td-11 {
+  width: 15%;
+  justify-content: center;
+  display: flex;
+  height: 70rpx;
+  align-items: center;
+  border-right: 2px solid #ddd;
+}
+
+
+.td-12 {
+  width: 60%;
+  justify-content: center;
+  display: flex;
+  height: 70rpx;
+  align-items: center;
+  border-right: 2px solid #ddd;
+}
+
+.td-13 {
+  width: 25%;
+  justify-content: center;
+  display: flex;
+  height: 70rpx;
+  align-items: center;
+  border-right: 2px solid #ddd;
+}
+
 .bg-w {
   background: cyan;
 }
@@ -140,6 +168,16 @@
   z-index: 2;
 }
 
+.modalDlg {
+  width: 98%;
+  min-height: 200rpx;
+  z-index: 9999;
+  background: white;
+  border-radius: 10rpx;
+  position: relative;
+  overflow: hidden;
+}
+
 
 .detail-td-1 {
   width: 30%;
@@ -181,4 +219,35 @@
   display: flex;
   height: 70rpx;
   align-items: center;
+}
+
+.m1 {
+  margin-top: 200rpx;
+}
+
+.i5 {
+  margin-top: 70rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.i1 {
+  color: black;
+  height: 80rpx;
+  font-size: 50rpx;
+  background-color: cyan;
+  width: 300rpx;
+  text-align: center;
+  border-top-left-radius: 30rpx;
+  border-top-right-radius: 30rpx;
+  border-bottom-right-radius: 30rpx;
+  border-bottom-left-radius: 30rpx;
+}
+
+.i2 {
+  margin-top: 70rpx;
+  background-color: cyan;
+  text-align: center;
+  font-size: 40rpx;
 }

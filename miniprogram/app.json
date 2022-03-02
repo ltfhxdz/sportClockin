@@ -1,8 +1,8 @@
 {
   "pages": [
+    "pages/setup/setup",
     "pages/statistics/statistics",
-    "pages/clockin/clockin",
-    "pages/setup/setup"
+    "pages/clockin/clockin"
   ],
   "window": {
     "backgroundTextStyle": "dark",

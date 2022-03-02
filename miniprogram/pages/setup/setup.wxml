@@ -1,4 +1,4 @@
-<view class="table" wx:if="{{!detailShow}}">
+<view class="table" wx:if="{{bigShow}}">
   <view class="tr bg-w bold">
     <view class="td-1">序号</view>
     <view class="td-2">肌肉群</view>
@@ -32,17 +32,19 @@
   </block>
 </view>
 
+
+<view class="mask" style="{{!bigAddHidden?'z-index: 1;opacity:0.8':''}}" catchtap='bigAddCancel'>
+</view>
 <modal hidden="{{bigAddHidden}}" title="添加" bindcancel="bigAddCancel" bindconfirm="bigAddConfirm">
   <view class="item1">
-    <input type='text' cursor-spacing='100' value="{{bigAddValue}}" maxlength="20" placeholder="请输入肌肉群"
-      bindinput="bigAddInput" />
+    <input type='text' cursor-spacing='100' value="{{bigAddValue}}" maxlength="20" placeholder="请输入肌肉群" bindinput="bigAddInput" />
     <view catchtap='bigAddClean' wx:if="{{bigAddFlag}}">
       <image src='../images/x.png' class="clean"></image>
     </view>
   </view>
 </modal>
 
-<view wx:if="{{!detailShow}}">
+<view wx:if="{{bigShow}}">
   <view class="table" wx:if="{{activityFlag}}">
     <view class="tr bg-w bold">
       <view class="td-1">序号</view>
@@ -81,8 +83,7 @@
       <view class="tr bg-g" wx:if="{{index % 2 == 0}}">
         <view class="td-1"></view>
         <view class="td-2-1" catchtap='showGroup' data-id="{{item._id}}" data-name="{{item.name}}">
-          <text
-            decode="{{true}}">&nbsp;&nbsp;{{item.group}}组&nbsp;&nbsp;{{item.weight}}{{item.unit}}&nbsp;&nbsp;{{item.number}}个</text>
+          <text decode="{{true}}">&nbsp;&nbsp;{{item.group}}组&nbsp;&nbsp;{{item.weight}}{{item.unit}}&nbsp;&nbsp;{{item.number}}个</text>
         </view>
         <view class="td-3"></view>
         <view class="td-4"></view>
@@ -92,8 +93,7 @@
       <view class="tr bg-g2" wx:else>
         <view class="td-1"></view>
         <view class="td-2-1" catchtap='showGroup' data-id="{{item._id}}" data-name="{{item.name}}">
-          <text
-            decode="{{true}}">&nbsp;&nbsp;{{item.group}}组&nbsp;&nbsp;{{item.weight}}{{item.unit}}&nbsp;&nbsp;{{item.number}}个</text>
+          <text decode="{{true}}">&nbsp;&nbsp;{{item.group}}组&nbsp;&nbsp;{{item.weight}}{{item.unit}}&nbsp;&nbsp;{{item.number}}个</text>
         </view>
         <view class="td-3"></view>
         <view class="td-4"></view>
@@ -105,8 +105,7 @@
 
 <modal hidden="{{smallAddHidden}}" title="添加" bindcancel="smallAddCancel" bindconfirm="smallAddConfirm">
   <view class="item1">
-    <input type='text' cursor-spacing='100' value="{{smallAddValue}}" maxlength="20" placeholder="请输入动作"
-      bindinput="smallAddInput" />
+    <input type='text' cursor-spacing='100' value="{{smallAddValue}}" maxlength="20" placeholder="请输入动作" bindinput="smallAddInput" />
     <view catchtap='smallAddClean' wx:if="{{smallAddFlag}}">
       <image src='../images/x.png' class="clean"></image>
     </view>
@@ -160,6 +159,55 @@
 
     <view class="tr bg-g">
       <view class="button1" catchtap='detailAdd'><button>确定</button></view>
+    </view>
+  </view>
+</view>
+
+<view class="mask" style="{{bigAddFrameHidden?'z-index: 1;opacity:0.8':''}}" catchtap='bigAddFrameCancel'>
+</view>
+<view class="modalBg m1" wx:if="{{bigAddFrameHidden}}">
+  <view class="modalDlg">
+    <view class="i5">
+      <view class="i1">
+        <text bindtap="bigSelectAdd">选择添加</text>
+      </view>
+      <view class="i1">
+        <text bindtap="bigHandworkAdd">手工添加</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="mask" style="{{bigSelectShow?'z-index: 1;opacity:0.8':''}}" catchtap='bigAddCancel'>
+</view>
+<view class="modalBg" wx:if="{{bigSelectShow}}">
+  <view class="modalDlg">
+    <view class="table">
+      <view class="tr bg-w bold">
+        <view class="td-11">序号</view>
+        <view class="td-12">肌肉群</view>
+        <view class="td-13">添加</view>
+      </view>
+
+      <block wx:for="{{selectList}}" wx:key="id">
+        <view class="tr bg-g" wx:if="{{index % 2 == 0}}">
+          <view class="td-11">{{index+1}}</view>
+          <view class="td-12  bold">{{item.muscle}}</view>
+          <view class="td-13">
+            <switch bindchange="selectActivation" data-muscle="{{item.muscle}}"></switch>
+          </view>
+        </view>
+        <view class="tr bg-g2" wx:else>
+          <view class="td-11">{{index+1}}</view>
+          <view class="td-12  bold">{{item.muscle}}</view>
+          <view class="td-13">
+            <switch bindchange="selectActivation" data-muscle="{{item.muscle}}"></switch>
+          </view>
+        </view>
+      </block>
+      <view class="i2">
+        <button bindtap="bigSelectAddCancel">取消</button>
+      </view>
     </view>
   </view>
 </view>

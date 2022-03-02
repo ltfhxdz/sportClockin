@@ -3,12 +3,12 @@
   "cloudfunctionRoot": "cloudfunctions/",
   "setting": {
     "urlCheck": true,
-    "es6": true,
+    "es6": false,
     "enhance": true,
     "postcss": true,
     "preloadBackgroundData": false,
     "minified": true,
-    "newFeature": true,
+    "newFeature": false,
     "coverView": true,
     "nodeModules": false,
     "autoAudits": false,
@@ -28,13 +28,15 @@
       "disablePlugins": [],
       "outputPath": ""
     },
-    "enableEngineNative": false,
     "useIsolateContext": true,
     "userConfirmedBundleSwitch": false,
     "packNpmManually": false,
     "packNpmRelationList": [],
     "minifyWXSS": true,
-    "showES6CompileOption": false
+    "disableUseStrict": false,
+    "minifyWXML": true,
+    "showES6CompileOption": false,
+    "useCompilerPlugins": false
   },
   "appid": "wx4c5c1324a10da825",
   "projectname": "sportClockin",
