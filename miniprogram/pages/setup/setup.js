@@ -12,6 +12,7 @@ Page({
     smallAddHidden: true,
     detailShow: false,
     bigShow: true,
+    bigAddFrameHidden: false,
     groupArray: [
       [1, 2, 3, 4, 5, 6, 7, 8, 9]
     ],
@@ -265,7 +266,6 @@ Page({
 
 
   smallAddDB: function (big_id, name) {
-
     db.collection('small').add({
       data: {
         big_id: big_id,
@@ -378,7 +378,7 @@ Page({
   },
 
   smallQueryBybig_id: function (big_id) {
-    db.collection('small').where({
+    db.collection('small').orderBy('create_date', 'asc').where({
       big_id: big_id
     }).get({
       success: res => {
@@ -429,9 +429,9 @@ Page({
   },
 
   selectActivation: function (e) {
-    if(e.detail.value){
+    if (e.detail.value) {
       this.bigAddDB(e.currentTarget.dataset.muscle);
-    }else{
+    } else {
       this.bigDeleteByName(e.currentTarget.dataset.muscle);
     }
   },
@@ -442,14 +442,14 @@ Page({
     let selectList = [];
     for (let x in muscleArray) {
       let flag = false;
-      for(let y in bigList){
+      for (let y in bigList) {
         let name = bigList[y].name;
-        if(name == muscleArray[x]['muscle']){
+        if (name == muscleArray[x]['muscle']) {
           flag = true;
           break;
         }
       }
-      if(!flag){
+      if (!flag) {
         let selectMap = {};
         selectMap['muscle'] = muscleArray[x]['muscle'];
         selectList.push(selectMap);
@@ -495,9 +495,7 @@ Page({
     })
   },
 
-  bigAddCancel: function () {
-    // this.bigQuery();
-
+  bigHandAddCancel: function () {
     this.setData({
       bigAddValue: '',
       bigAddHidden: true,
@@ -507,18 +505,15 @@ Page({
     });
   },
 
-
   bigAddConfirm: function () {
     //TODO 如果存在就更新，如果不存在，就添加
     this.bigAddDB(this.data.bigName);
-
 
     this.setData({
       bigAddHidden: true,
       bigAddFrameHidden: false,
       bigShow: true
     });
-
   },
 
 
@@ -542,7 +537,7 @@ Page({
 
 
   bigQuery: function () {
-    db.collection('big').orderBy('name', 'asc').get({
+    db.collection('big').orderBy('create_date', 'asc').get({
       success: res => {
         this.setData({
           bigList: res.data
@@ -556,7 +551,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    
+
   },
 
   /**

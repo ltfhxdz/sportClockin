@@ -33,9 +33,7 @@
 </view>
 
 
-<view class="mask" style="{{!bigAddHidden?'z-index: 1;opacity:0.8':''}}" catchtap='bigAddCancel'>
-</view>
-<modal hidden="{{bigAddHidden}}" title="添加" bindcancel="bigAddCancel" bindconfirm="bigAddConfirm">
+<modal hidden="{{bigAddHidden}}" title="添加" bindcancel="bigHandAddCancel" bindconfirm="bigAddConfirm">
   <view class="item1">
     <input type='text' cursor-spacing='100' value="{{bigAddValue}}" maxlength="20" placeholder="请输入肌肉群" bindinput="bigAddInput" />
     <view catchtap='bigAddClean' wx:if="{{bigAddFlag}}">
@@ -178,8 +176,7 @@
   </view>
 </view>
 
-<view class="mask" style="{{bigSelectShow?'z-index: 1;opacity:0.8':''}}" catchtap='bigAddCancel'>
-</view>
+
 <view class="modalBg" wx:if="{{bigSelectShow}}">
   <view class="modalDlg">
     <view class="table">
@@ -206,7 +203,7 @@
         </view>
       </block>
       <view class="i2">
-        <button bindtap="bigSelectAddCancel">取消</button>
+        <button bindtap="bigSelectAddCancel">返回</button>
       </view>
     </view>
   </view>
