@@ -12,7 +12,9 @@ Page({
     smallAddHidden: true,
     detailShow: false,
     bigShow: true,
+    smallShow: true,
     bigAddFrameHidden: false,
+    smallAddFrameHidden: false,
     groupArray: [
       [1, 2, 3, 4, 5, 6, 7, 8, 9]
     ],
@@ -36,6 +38,7 @@ Page({
     this.setData({
       detailShow: false,
       bigShow: true,
+      smallShow: true,
     })
   },
 
@@ -112,6 +115,7 @@ Page({
         this.setData({
           detailShow: true,
           bigShow: false,
+          smallShow: false,
           smallId: e.currentTarget.dataset.id,
           action: e.currentTarget.dataset.name,
           group: res.data[0]['group'],
@@ -128,6 +132,7 @@ Page({
     this.setData({
       detailShow: false,
       bigShow: true,
+      smallShow: true,
     })
   },
 
@@ -283,9 +288,11 @@ Page({
   },
 
   smallAdd: function () {
-    this.smallAddClean();
     this.setData({
-      smallAddHidden: false
+      smallAddFrameHidden: true,
+      detailShow: false,
+      bigShow: false,
+      smallShow: false,
     })
   },
 
@@ -293,18 +300,43 @@ Page({
     this.setData({
       smallAddValue: '',
       smallAddHidden: true,
-      smallAddFlag: false
+      smallAddFlag: false,
+      smallAddFrameHidden: true
     });
   },
 
-
   smallAddConfirm: function () {
-    this.smallAddDB(this.data.big_id, this.data.smallName);
+    let smallName = this.data.smallName;
 
+    if (typeof (smallName) != "undefined") {
+      smallName = smallName.replace(/^\s*|\s*$/g,"");
+  
+      if(smallName == ""){
+        wx.showToast({
+          title: '输入不能为空',
+          icon: 'none',
+          duration: 2000,
+          mask: true
+        });
+        this.smallAddClean();
 
-    this.setData({
-      smallAddHidden: true
-    });
+      }else{
+        this.smallAddDB(this.data.big_id, this.data.smallName);
+    
+        this.setData({
+          smallAddHidden: true,
+          bigShow: true,
+          smallShow: true,
+        });
+      }
+    }else{
+      wx.showToast({
+        title: '输入不能为空',
+        icon: 'none',
+        duration: 2000,
+        mask: true
+      })
+    }
   },
 
 
@@ -425,10 +457,11 @@ Page({
       bigAddFrameHidden: true,
       detailShow: false,
       bigShow: false,
+      smallShow: false,
     })
   },
 
-  selectActivation: function (e) {
+  bigSelectActivation: function (e) {
     if (e.detail.value) {
       this.bigAddDB(e.currentTarget.dataset.muscle);
     } else {
@@ -436,10 +469,27 @@ Page({
     }
   },
 
+  smallSelectActivation: function (e) {
+    if (e.detail.value) {
+      this.smallAddDB(this.data.big_id, e.currentTarget.dataset.action);
+    } else {
+      this.smallDeleteByName(this.data.big_id, e.currentTarget.dataset.action);
+    }
+  },
+
+  smallDeleteByName: function (big_id, name) {
+    db.collection('small').where({
+      big_id: big_id,
+      name: name
+    }).remove();
+
+    this.smallQuery(big_id);
+  },
+
   bigSelectAdd: function () {
     let bigList = this.data.bigList;
     let muscleArray = muscleJson.muscleJson;
-    let selectList = [];
+    let bigSelectList = [];
     for (let x in muscleArray) {
       let flag = false;
       for (let y in bigList) {
@@ -452,15 +502,54 @@ Page({
       if (!flag) {
         let selectMap = {};
         selectMap['muscle'] = muscleArray[x]['muscle'];
-        selectList.push(selectMap);
+        bigSelectList.push(selectMap);
       }
     }
 
     this.setData({
-      selectList: selectList,
+      bigSelectList: bigSelectList,
       bigAddFrameHidden: false,
       bigSelectShow: true,
-      bigShow: false
+      bigShow: false,
+      smallShow: false,
+    })
+  },
+
+
+  smallSelectAdd: function () {
+    let smallList = this.data.smallList;
+    let muscleArray = muscleJson.muscleJson;
+
+    let actionList = [];
+    for (let x in muscleArray) {
+      if (this.data.activity == muscleArray[x]['muscle']) {
+        actionList = muscleArray[x]['actionList'];
+        break;
+      }
+    }
+
+    let smallSelectList = [];
+    for (let x in actionList) {
+      let flag = false;
+      for (let y in smallList) {
+        let name = smallList[y].name;
+        if (name == actionList[x]) {
+          flag = true;
+          break;
+        }
+      }
+      if (!flag) {
+        let selectMap = {};
+        selectMap['action'] = actionList[x];
+        smallSelectList.push(selectMap);
+      }
+    }
+
+    this.setData({
+      smallSelectList: smallSelectList,
+      smallAddFrameHidden: false,
+      smallSelectShow: true,
+      smallShow: false,
     })
   },
 
@@ -474,14 +563,26 @@ Page({
     this.setData({
       bigAddFrameHidden: false,
       detailShow: false,
-      bigShow: true
+      bigShow: true,
+      smallShow: true,
+    })
+  },
+
+  smallAddFrameCancel: function () {
+    this.setData({
+      smallAddFrameHidden: false,
+      detailShow: false,
+      bigShow: true,
+      smallShow: true,
     })
   },
 
   bigSelectAddCancel: function () {
     this.setData({
       bigSelectShow: false,
-      bigShow: true
+      bigShow: true,
+      smallShow: true,
+      smallSelectShow: false
     })
 
     this.bigQuery();
@@ -495,7 +596,15 @@ Page({
     })
   },
 
-  bigHandAddCancel: function () {
+  smallHandworkAdd: function () {
+    this.smallAddClean();
+    this.setData({
+      smallAddHidden: false,
+      smallAddFrameHidden: false
+    })
+  },
+
+  bigHandworkAddCancel: function () {
     this.setData({
       bigAddValue: '',
       bigAddHidden: true,
@@ -507,13 +616,38 @@ Page({
 
   bigAddConfirm: function () {
     //TODO 如果存在就更新，如果不存在，就添加
-    this.bigAddDB(this.data.bigName);
+    //TODO 查询名称，如果存在，提示不能添加
 
-    this.setData({
-      bigAddHidden: true,
-      bigAddFrameHidden: false,
-      bigShow: true
-    });
+    let bigName = this.data.bigName;
+    if (typeof (bigName) != "undefined") {
+      bigName = bigName.replace(/^\s*|\s*$/g,"");
+      if(bigName == ""){
+        wx.showToast({
+          title: '输入不能为空',
+          icon: 'none',
+          duration: 2000,
+          mask: true
+        });
+        this.bigAddClean();
+      }else{
+        this.bigAddDB(bigName);
+  
+        this.setData({
+          bigAddHidden: true,
+          bigAddFrameHidden: false,
+          bigShow: true,
+          smallShow: true,
+        });
+      }
+    }else{
+      wx.showToast({
+        title: '输入不能为空',
+        icon: 'none',
+        duration: 2000,
+        mask: true
+      })
+    }
+
   },
 
 

@@ -33,7 +33,7 @@
 </view>
 
 
-<modal hidden="{{bigAddHidden}}" title="添加" bindcancel="bigHandAddCancel" bindconfirm="bigAddConfirm">
+<modal hidden="{{bigAddHidden}}" title="添加" bindcancel="bigHandworkAddCancel" bindconfirm="bigAddConfirm">
   <view class="item1">
     <input type='text' cursor-spacing='100' value="{{bigAddValue}}" maxlength="20" placeholder="请输入肌肉群" bindinput="bigAddInput" />
     <view catchtap='bigAddClean' wx:if="{{bigAddFlag}}">
@@ -42,7 +42,7 @@
   </view>
 </modal>
 
-<view wx:if="{{bigShow}}">
+<view wx:if="{{smallShow}}">
   <view class="table" wx:if="{{activityFlag}}">
     <view class="tr bg-w bold">
       <view class="td-1">序号</view>
@@ -186,19 +186,66 @@
         <view class="td-13">添加</view>
       </view>
 
-      <block wx:for="{{selectList}}" wx:key="id">
+      <block wx:for="{{bigSelectList}}" wx:key="id">
         <view class="tr bg-g" wx:if="{{index % 2 == 0}}">
           <view class="td-11">{{index+1}}</view>
           <view class="td-12  bold">{{item.muscle}}</view>
           <view class="td-13">
-            <switch bindchange="selectActivation" data-muscle="{{item.muscle}}"></switch>
+            <switch bindchange="bigSelectActivation" data-muscle="{{item.muscle}}"></switch>
           </view>
         </view>
         <view class="tr bg-g2" wx:else>
           <view class="td-11">{{index+1}}</view>
           <view class="td-12  bold">{{item.muscle}}</view>
           <view class="td-13">
-            <switch bindchange="selectActivation" data-muscle="{{item.muscle}}"></switch>
+            <switch bindchange="bigSelectActivation" data-muscle="{{item.muscle}}"></switch>
+          </view>
+        </view>
+      </block>
+      <view class="i2">
+        <button bindtap="bigSelectAddCancel">返回</button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="mask" style="{{smallAddFrameHidden?'z-index: 1;opacity:0.8':''}}" catchtap='smallAddFrameCancel'>
+</view>
+<view class="modalBg m1" wx:if="{{smallAddFrameHidden}}">
+  <view class="modalDlg">
+    <view class="i5">
+      <view class="i1">
+        <text bindtap="smallSelectAdd">选择添加</text>
+      </view>
+      <view class="i1">
+        <text bindtap="smallHandworkAdd">手工添加</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="modalBg" wx:if="{{smallSelectShow}}">
+  <view class="modalDlg">
+    <view class="table">
+      <view class="tr bg-w bold">
+        <view class="td-11">序号</view>
+        <view class="td-12">动作</view>
+        <view class="td-13">添加</view>
+      </view>
+
+      <block wx:for="{{smallSelectList}}" wx:key="id">
+        <view class="tr bg-g" wx:if="{{index % 2 == 0}}">
+          <view class="td-11">{{index+1}}</view>
+          <view class="td-12  bold">{{item.action}}</view>
+          <view class="td-13">
+            <switch bindchange="smallSelectActivation" data-action="{{item.action}}"></switch>
+          </view>
+        </view>
+        <view class="tr bg-g2" wx:else>
+          <view class="td-11">{{index+1}}</view>
+          <view class="td-12  bold">{{item.action}}</view>
+          <view class="td-13">
+            <switch bindchange="smallSelectActivation" data-action="{{item.action}}"></switch>
           </view>
         </view>
       </block>
