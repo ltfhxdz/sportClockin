@@ -100,6 +100,7 @@ async function getStartList(openid) {
         _id: '$small_weight',
         startDate: $.min('$clockin_date')
       })
+      .limit(35600)
       .end();
 
     return queryList['list'];
@@ -120,6 +121,7 @@ async function getNameList(openid) {
         _id: '$small_name',
         big_name: $.first('$big_name')
       })
+      .limit(35600)
       .end();
 
     return queryList['list'];
@@ -144,6 +146,7 @@ async function getMuscleList(openid) {
           clockin_date: '$clockin_date'
         })
       })
+      .limit(35600)
       .end();
 
     let muscleList = [];
