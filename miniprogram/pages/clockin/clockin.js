@@ -9,7 +9,8 @@ Page({
     detailShow: false,
     weightArray: [
       [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150],
-      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      ['.0', '.1', '.2', '.3', '.4', '.5', '.6', '.7', '.8', '.9']
     ],
     numberArray: [
       [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
@@ -76,7 +77,7 @@ Page({
 
   weightMethod: function (e) {
     let weightArray = e.detail.value;
-    let weight = weightArray[0] * 10 + weightArray[1];
+    let weight = weightArray[0] * 10 + weightArray[1] + weightArray[2] * 0.1;
     let groupIndex = e.currentTarget.dataset.group;
     let groupList = [];
     for (let x in this.data.groupList) {

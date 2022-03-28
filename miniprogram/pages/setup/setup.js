@@ -23,7 +23,8 @@ Page({
 
     weightArray: [
       [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150],
-      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      ['.0', '.1', '.2', '.3', '.4', '.5', '.6', '.7', '.8', '.9']
     ],
     numberArray: [
       [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
@@ -93,7 +94,7 @@ Page({
 
   weightMethod: function (e) {
     let weightArray = e.detail.value;
-    let weight = weightArray[0] * 10 + weightArray[1];
+    let weight = weightArray[0] * 10 + weightArray[1] + weightArray[2] * 0.1;
 
     this.setData({
       weight: weight,
@@ -309,9 +310,9 @@ Page({
     let smallName = this.data.smallName;
 
     if (typeof (smallName) != "undefined") {
-      smallName = smallName.replace(/^\s*|\s*$/g,"");
-  
-      if(smallName == ""){
+      smallName = smallName.replace(/^\s*|\s*$/g, "");
+
+      if (smallName == "") {
         wx.showToast({
           title: '输入不能为空',
           icon: 'none',
@@ -320,16 +321,16 @@ Page({
         });
         this.smallAddClean();
 
-      }else{
+      } else {
         this.smallAddDB(this.data.big_id, this.data.smallName);
-    
+
         this.setData({
           smallAddHidden: true,
           bigShow: true,
           smallShow: true,
         });
       }
-    }else{
+    } else {
       wx.showToast({
         title: '输入不能为空',
         icon: 'none',
@@ -620,8 +621,8 @@ Page({
 
     let bigName = this.data.bigName;
     if (typeof (bigName) != "undefined") {
-      bigName = bigName.replace(/^\s*|\s*$/g,"");
-      if(bigName == ""){
+      bigName = bigName.replace(/^\s*|\s*$/g, "");
+      if (bigName == "") {
         wx.showToast({
           title: '输入不能为空',
           icon: 'none',
@@ -629,9 +630,9 @@ Page({
           mask: true
         });
         this.bigAddClean();
-      }else{
+      } else {
         this.bigAddDB(bigName);
-  
+
         this.setData({
           bigAddHidden: true,
           bigAddFrameHidden: false,
@@ -639,7 +640,7 @@ Page({
           smallShow: true,
         });
       }
-    }else{
+    } else {
       wx.showToast({
         title: '输入不能为空',
         icon: 'none',
