@@ -65,7 +65,6 @@ exports.main = async (event, context) => {
   return sortStatisticsList(statisticsList);
 }
 
-
 async function sortStatisticsList(statisticsList) {
   for (let a in statisticsList) {
     let actionList = statisticsList[a].actionList;
@@ -194,10 +193,10 @@ async function getMuscleList(openid) {
     let bigList = await bigQuery(openid);
     for (let m in bigList) {
       for (let x in list) {
-        if(bigList[m] == list[x]['_id']){
+        if (bigList[m] == list[x]['_id']) {
           let resultMap = {};
           resultMap['muscle'] = list[x]['_id'];
-  
+
           let dateList = [];
           let dates = list[x]['dates'];
           for (let y in dates) {
@@ -217,7 +216,7 @@ async function getMuscleList(openid) {
               dateList.push(date_str);
             }
           }
-  
+
           resultMap['days'] = dateList.length;
           muscleList.push(resultMap);
 
