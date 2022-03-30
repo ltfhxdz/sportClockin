@@ -93,7 +93,7 @@ async function sortStatisticsList(statisticsList) {
             }
           }
 
-          if (parseInt(weightA) > parseInt(weightB)) {
+          if (parseInt(weightA) < parseInt(weightB)) {
             var temp = groupList[j];
             groupList[j] = groupList[j + 1];
             groupList[j + 1] = temp;
