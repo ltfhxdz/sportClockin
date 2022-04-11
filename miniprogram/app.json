@@ -8,7 +8,7 @@
   "window": {
     "backgroundTextStyle": "dark",
     "navigationBarBackgroundColor": "#000000",
-    "navigationBarTitleText": "强身打卡",
+    "navigationBarTitleText": "健身打卡",
     "navigationBarTextStyle": "white"
   },
   "tabBar": {
