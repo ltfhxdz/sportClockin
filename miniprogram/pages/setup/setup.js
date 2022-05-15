@@ -187,13 +187,17 @@ Page({
   },
 
 
-
   addActivity: function (e) {
-    this.smallQuery(e.currentTarget.dataset.id);
+    this.addActivitySub(e.currentTarget.dataset.id, e.currentTarget.dataset.name);
+  },
+
+
+  addActivitySub: function (big_id, big_name) {
+    this.smallQuery(big_id);
 
     this.setData({
-      big_id: e.currentTarget.dataset.id,
-      activity: e.currentTarget.dataset.name,
+      big_id: big_id,
+      activity: big_name,
       activityFlag: true
     })
   },
@@ -246,6 +250,8 @@ Page({
           smallList.push(smallMap);
         }
 
+
+
         this.setData({
           smallList: smallList
         })
@@ -288,12 +294,23 @@ Page({
     })
   },
 
-  smallAdd: function () {
+  smallAdd: function (e) {
+    let muscleArray = muscleJson.muscleJson;
+    let selectFlag = false;
+    for (let x in muscleArray) {
+      if (this.data.activity == muscleArray[x].muscle) {
+        selectFlag = true;
+        break;
+      }
+    }
+
+
     this.setData({
       smallAddFrameHidden: true,
       detailShow: false,
       bigShow: false,
       smallShow: false,
+      selectFlag: selectFlag
     })
   },
 
@@ -674,9 +691,24 @@ Page({
   bigQuery: function () {
     db.collection('big').orderBy('create_date', 'asc').get({
       success: res => {
+        let bigList = res.data;
+        let first_big_id = '';
+        let first_big_name = '';
+        for (let x in bigList) {
+          if (x == 0) {
+            first_big_id = bigList[0]['_id'];
+            first_big_name = bigList[0]['name'];
+            break;
+          }
+        }
+
         this.setData({
-          bigList: res.data
+          bigList: res.data,
+          first_big_id: first_big_id,
+          first_big_name: first_big_name
         })
+
+        this.addActivitySub(first_big_id, first_big_name);
       }
     })
   },

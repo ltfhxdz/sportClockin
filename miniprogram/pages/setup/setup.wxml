@@ -214,7 +214,7 @@
 <view class="modalBg m1" wx:if="{{smallAddFrameHidden}}">
   <view class="modalDlg">
     <view class="i5">
-      <view class="i1">
+      <view class="i1"  wx:if="{{selectFlag}}">
         <text bindtap="smallSelectAdd">选择添加</text>
       </view>
       <view class="i1">

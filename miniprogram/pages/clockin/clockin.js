@@ -469,42 +469,50 @@ Page({
       success: res => {
         bigList2 = res.data;
 
+        wx.cloud.callFunction({
+          name: 'getUserInfo',
+          complete: res => {
+            let openid = res.result.openid;
 
-        db.collection('small').where({
-          activation: true
-        }).get({
-          success: res => {
-            smallList2 = res.data;
+            wx.cloud.callFunction({
+              name: 'smallQuery',
+              data: {
+                openid: openid
+              },
+              complete: res => {
+                smallList2 = res.result.data;
 
-            let bigList = [];
-            for (let x in bigList2) {
-              let bigMap = {};
-              bigMap["big_id"] = bigList2[x]["_id"];
-              bigMap["name"] = bigList2[x]["name"];
-              let smallList = [];
+                let bigList = [];
+                for (let x in bigList2) {
+                  let bigMap = {};
+                  bigMap["big_id"] = bigList2[x]["_id"];
+                  bigMap["name"] = bigList2[x]["name"];
+                  let smallList = [];
 
-              for (let y in smallList2) {
-                if (bigList2[x]["_id"] == smallList2[y]["big_id"]) {
-                  let smallMap = {};
-                  smallMap["small_id"] = smallList2[y]["_id"];
-                  smallMap["name"] = smallList2[y]["name"];
-                  smallList.push(smallMap);
+                  for (let y in smallList2) {
+                    if (bigList2[x]["_id"] == smallList2[y]["big_id"]) {
+                      let smallMap = {};
+                      smallMap["small_id"] = smallList2[y]["_id"];
+                      smallMap["name"] = smallList2[y]["name"];
+                      smallList.push(smallMap);
+                    }
+                  }
+
+                  bigMap["smallList"] = smallList;
+                  bigList.push(bigMap);
+
                 }
+                this.setData({
+                  bigList: bigList
+                })
+
               }
-
-              bigMap["smallList"] = smallList;
-              bigList.push(bigMap);
-
-            }
-            this.setData({
-              bigList: bigList
             })
           }
         })
       }
     })
   },
-
 
 
   /**
@@ -562,7 +570,7 @@ Page({
   onReachBottom: function () {
 
   },
-    /**
+  /**
    * 允许用户点击右上角分享给朋友
    */
   onShareAppMessage: function () {
